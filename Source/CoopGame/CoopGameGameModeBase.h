@@ -13,5 +13,5 @@ UCLASS()
 class COOPGAME_API ACoopGameGameModeBase : public AGameModeBase
 {
 	GENERATED_BODY()
-	
+    
 };
