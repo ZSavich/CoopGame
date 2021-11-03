@@ -65,3 +65,9 @@ void ASCharacter::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
+FVector ASCharacter::GetPawnViewLocation() const
+{
+    if(!CameraComp) return Super::GetPawnViewLocation();
+    return CameraComp->GetComponentLocation();
+}
+

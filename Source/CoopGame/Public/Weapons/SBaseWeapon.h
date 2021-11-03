@@ -12,10 +12,13 @@ class COOPGAME_API ASBaseWeapon : public AActor
 	
 public:	
 	ASBaseWeapon();
-
+    
 protected:
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components")
     USkeletalMeshComponent* MeshComp;
-
+    
+    UFUNCTION(BlueprintCallable)
+    void Fire() const;
+    
     virtual void BeginPlay() override;
 };
