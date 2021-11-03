@@ -5,6 +5,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/PawnMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "Components/SWeaponComponent.h"
 
 ASCharacter::ASCharacter()
 {
@@ -17,6 +18,8 @@ ASCharacter::ASCharacter()
     
     CameraComp = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera Component"));
     CameraComp->SetupAttachment(SpringArmComp);
+
+    WeaponComponent = CreateDefaultSubobject<USWeaponComponent>(TEXT("Weapon Component"));
 }
 
 void ASCharacter::BeginPlay()
