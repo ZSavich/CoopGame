@@ -22,14 +22,27 @@ protected:
     
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Weapon Properties")
     float ShotDistance;
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Weapon Properties")
+    FName MuzzleSocketName;
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Weapon Properties")
+    FName TracerEffectEndPointName;
     
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Weapon Properties")
     TSubclassOf<UDamageType> DamageTypeClass;
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Effects")
+    UParticleSystem* MuzzleEffect;
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Effects")
+    UParticleSystem* ImpactEffect;
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Effects")
+    UParticleSystem* TracerEffect;
     
     UFUNCTION(BlueprintCallable)
     void Fire();
-
-    
     
     virtual void BeginPlay() override;
 };
