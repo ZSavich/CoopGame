@@ -3,11 +3,13 @@
 #include "Weapons/SBaseWeapon.h"
 
 #include "DrawDebugHelpers.h"
+#include "Kismet/GameplayStatics.h"
 
 ASBaseWeapon::ASBaseWeapon()
 {
     MeshComp = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Weapon Mesh"));
-    
+    BaseDamage = 15.f;
+    ShotDistance = 1500.f;
 }
 
 void ASBaseWeapon::BeginPlay()
@@ -16,15 +18,16 @@ void ASBaseWeapon::BeginPlay()
 	
 }
 
-void ASBaseWeapon::Fire() const
+void ASBaseWeapon::Fire()
 {
     if(!GetOwner() || !GetWorld()) return;
     
     FVector EyesLocation;
     FRotator EyesRotation;
     GetOwner()->GetActorEyesViewPoint(EyesLocation, EyesRotation);
-
-    const auto EndTrace = EyesLocation + (EyesRotation.Vector() * 1000);
+    
+    const auto ShotDirection = EyesRotation.Vector();
+    const auto EndTrace = EyesLocation + (ShotDirection * ShotDistance);
 
     FCollisionQueryParams CollisionParams;
     CollisionParams.AddIgnoredActor(GetOwner());
@@ -35,7 +38,8 @@ void ASBaseWeapon::Fire() const
     if(GetWorld()->LineTraceSingleByChannel(HitResult,EyesLocation,EndTrace,
         ECC_Visibility, CollisionParams))
     {
-        // Blocking Object Damage
+        UGameplayStatics::ApplyPointDamage(HitResult.GetActor(), BaseDamage, ShotDirection, HitResult,
+            GetOwner()->GetInstigatorController(), this, DamageTypeClass);
     }
-    DrawDebugLine(GetWorld(), EyesLocation, EndTrace,FColor::Red,false,5.f,5.f,5.f);
+    DrawDebugLine(GetWorld(), EyesLocation, EndTrace,FColor::Red,false,2.f,2.f,2.f);
 }

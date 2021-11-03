@@ -17,8 +17,19 @@ protected:
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components")
     USkeletalMeshComponent* MeshComp;
     
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Weapon Properties")
+    float BaseDamage;
+    
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Weapon Properties")
+    float ShotDistance;
+    
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Weapon Properties")
+    TSubclassOf<UDamageType> DamageTypeClass;
+    
     UFUNCTION(BlueprintCallable)
-    void Fire() const;
+    void Fire();
+
+    
     
     virtual void BeginPlay() override;
 };
