@@ -1,4 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -6,21 +5,44 @@
 #include "GameFramework/Actor.h"
 #include "SProjectile.generated.h"
 
+class USphereComponent;
+class UProjectileMovementComponent;
+
 UCLASS()
 class COOPGAME_API ASProjectile : public AActor
 {
 	GENERATED_BODY()
 	
 public:	
-	// Sets default values for this actor's properties
 	ASProjectile();
 
+    
 protected:
-	// Called when the game starts or when spawned
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components")
+    UStaticMeshComponent* MeshComp;
+
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components")
+    USphereComponent* SphereCollision;
+
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components")
+    UProjectileMovementComponent* ProjectileMovement;
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Projectile Properties")
+    float BaseDamage;
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Projectile Properties")
+    float DamageRadius;
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Projectile Properties")
+    TSubclassOf<UDamageType> DamageTypeClass;
+
+    UPROPERTY(EditDefaultsOnly, Category = "Effects")
+    UParticleSystem* ImpactEffect;
+    
 	virtual void BeginPlay() override;
 
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
+    
+    UFUNCTION()
+    void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 
 };

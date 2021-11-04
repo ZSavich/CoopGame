@@ -20,11 +20,16 @@ ASCharacter::ASCharacter()
     CameraComp->SetupAttachment(SpringArmComp);
 
     WeaponComponent = CreateDefaultSubobject<USWeaponComponent>(TEXT("Weapon Component"));
+
+    bWantsZoom = false;
+    ZoomedFOV = 50.f;
+    ZoomInterpolatingSpeed = 20.f;
 }
 
 void ASCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+    DefaultFOV = CameraComp->FieldOfView;
 }
 
 void ASCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -38,6 +43,11 @@ void ASCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
     PlayerInputComponent->BindAction("Crouch", IE_Pressed, this, &ASCharacter::StartCrouch);
     PlayerInputComponent->BindAction("Crouch", IE_Released, this, &ASCharacter::EndCrouch);
     PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ASCharacter::Jump);
+    PlayerInputComponent->BindAction("Fire", IE_Pressed, WeaponComponent, &USWeaponComponent::Fire);
+
+    DECLARE_DELEGATE_OneParam(FOnWantsZoomSignature, bool)
+    PlayerInputComponent->BindAction<FOnWantsZoomSignature>("Zoom", IE_Pressed, this, &ASCharacter::OnWantsZoom, true);
+    PlayerInputComponent->BindAction<FOnWantsZoomSignature>("Zoom", IE_Released, this, &ASCharacter::OnWantsZoom, false);
 }
 
 void ASCharacter::MoveForward(const float Amount)
@@ -60,9 +70,24 @@ void ASCharacter::EndCrouch()
     UnCrouch();
 }
 
+void ASCharacter::OnWantsZoom(const bool bIsWants)
+{
+    bWantsZoom = bIsWants;
+}
+
+void ASCharacter::ZoomTick(const float DeltaTime)
+{
+    const auto TargetFOV = bWantsZoom ? ZoomedFOV : DefaultFOV;
+    if(FMath::IsNearlyEqual(TargetFOV,CameraComp->FieldOfView,0.1f)) return;
+    
+    const auto InterpFOV = FMath::FInterpTo(CameraComp->FieldOfView,TargetFOV,DeltaTime,ZoomInterpolatingSpeed);
+    CameraComp->SetFieldOfView(InterpFOV);
+}
+
 void ASCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+    ZoomTick(DeltaTime);
 }
 
 FVector ASCharacter::GetPawnViewLocation() const

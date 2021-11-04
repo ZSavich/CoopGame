@@ -1,27 +1,53 @@
-// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Weapons/SProjectile.h"
+#include "DrawDebugHelpers.h"
+#include "SBaseWeapon.h"
+#include "Components/SphereComponent.h"
+#include "GameFramework/ProjectileMovementComponent.h"
+#include "Kismet/GameplayStatics.h"
 
-// Sets default values
 ASProjectile::ASProjectile()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+    SphereCollision = CreateDefaultSubobject<USphereComponent>(TEXT("Collision"));
+    SphereCollision->InitSphereRadius(15.f);
+    SphereCollision->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+    SphereCollision->SetCollisionResponseToAllChannels(ECR_Block);
+    SphereCollision->IgnoreActorWhenMoving(GetOwner(), true);
+    SphereCollision->bReturnMaterialOnMove = true;
+    SetRootComponent(SphereCollision);
+
+    MeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
+    MeshComp->SetupAttachment(GetRootComponent());
+    MeshComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+    
+    ProjectileMovement = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("Projectile Movement"));
+    ProjectileMovement->InitialSpeed = 4000.f;
+    ProjectileMovement->MaxSpeed = 10000.f;
+    ProjectileMovement->ProjectileGravityScale = 0.5f;
+    
+    BaseDamage = 75.f;
+    DamageRadius = 50.f;
 
 }
 
-// Called when the game starts or when spawned
 void ASProjectile::BeginPlay()
 {
 	Super::BeginPlay();
+    SphereCollision->OnComponentHit.AddDynamic(this, &ASProjectile::OnHit);
+    SetLifeSpan(5.f);
 	
 }
 
-// Called every frame
-void ASProjectile::Tick(float DeltaTime)
+void ASProjectile::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse,
+    const FHitResult& Hit)
 {
-	Super::Tick(DeltaTime);
+    const auto HitLocation = Hit.ImpactPoint;
+    UGameplayStatics::ApplyRadialDamage(GetWorld(),BaseDamage,HitLocation, DamageRadius,DamageTypeClass,
+        {GetInstigator()},GetOwner(), GetInstigator()->GetInstigatorController());
 
+    UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ImpactEffect, HitLocation);
+    MeshComp->DestroyComponent();
+    Destroy();
 }
 

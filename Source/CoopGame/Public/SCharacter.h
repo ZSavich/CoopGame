@@ -27,12 +27,24 @@ protected:
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components")
     USWeaponComponent* WeaponComponent;
     
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Zoom")
+    float ZoomedFOV;
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Zoom", meta = (ClampMin = 0.01f, ClampMax = 100.f))
+    float ZoomInterpolatingSpeed;
+    
+    float DefaultFOV;
+    bool bWantsZoom;
+    
 	virtual void BeginPlay() override;
 
     void MoveForward(const float Amount);
     void MoveRight(const float Amount);
     void StartCrouch();
     void EndCrouch();
+
+    void OnWantsZoom(const bool bIsWants);
+    void ZoomTick(const float DeltaTime);
 
 public:	
 	virtual void Tick(float DeltaTime) override;

@@ -15,6 +15,8 @@ class COOPGAME_API USWeaponComponent : public UActorComponent
 public:	
 	USWeaponComponent();
 
+    void Fire();
+
 protected:
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Weapon Info")
     TSubclassOf<ASBaseWeapon> WeaponClass;
