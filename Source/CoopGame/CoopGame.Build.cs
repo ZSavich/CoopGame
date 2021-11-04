@@ -13,7 +13,8 @@ public class CoopGame : ModuleRules
 			"CoreUObject",
 			"Engine",
 			"InputCore", 
-			"PhysicsCore"
+			"PhysicsCore",
+			"UMG",
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });

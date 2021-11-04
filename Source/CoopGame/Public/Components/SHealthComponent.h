@@ -8,6 +8,7 @@
 class ASCharacter;
 
 DECLARE_MULTICAST_DELEGATE(FOnDeathSignature);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnHealthChangedSignature, float, Health, float, MaxHealth);
 
 UCLASS( ClassGroup=(COOP), meta=(BlueprintSpawnableComponent) )
 class COOPGAME_API USHealthComponent : public UActorComponent
@@ -18,9 +19,13 @@ public:
 	USHealthComponent();
 
     FOnDeathSignature OnDeath;
+    UPROPERTY(BlueprintAssignable)
+    FOnHealthChangedSignature OnHealthChanged;
 
     UFUNCTION(BlueprintPure)
     FORCEINLINE float GetHealth() const {return Health;}
+    UFUNCTION(BlueprintPure)
+    FORCEINLINE float GetHealthByPercent() const {return Health/MaxHealth;}
     FORCEINLINE void SetMaxHealth(const float Amount) {MaxHealth = Amount;}
     UFUNCTION(BlueprintPure)
     FORCEINLINE bool IsDead() const {return bIsDead;}

@@ -37,6 +37,9 @@ protected:
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Zoom", meta = (ClampMin = 0.01f, ClampMax = 100.f))
     float ZoomInterpolatingSpeed;
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Widgets")
+    TSubclassOf<UUserWidget> PlayerHUDWidgetClass;
     
     float DefaultFOV;
     bool bWantsZoom;

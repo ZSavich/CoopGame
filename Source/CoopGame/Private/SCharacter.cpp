@@ -3,6 +3,7 @@
 #include "SCharacter.h"
 
 #include "SHealthComponent.h"
+#include "Blueprint/UserWidget.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -40,6 +41,8 @@ void ASCharacter::BeginPlay()
     check(HealthComp);
     DefaultFOV = CameraComp->FieldOfView;
     HealthComp->OnDeath.AddUObject(this,&ASCharacter::OnDeath);
+    const auto PlayerWidget = CreateWidget(GetController<APlayerController>(), PlayerHUDWidgetClass,TEXT("PlayerHUDWidget"));
+    if(PlayerWidget) PlayerWidget->AddToViewport();
 }
 
 void ASCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)

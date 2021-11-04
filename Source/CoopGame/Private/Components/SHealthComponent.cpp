@@ -35,4 +35,5 @@ void USHealthComponent::HandleTakeAnyDamage(AActor* DamagedActor, float Damage, 
         OnDeath.Broadcast();
     }
     Health = FMath::Clamp(Health - Damage, 0.f, MaxHealth);
+    OnHealthChanged.Broadcast(Health, MaxHealth);
 }
