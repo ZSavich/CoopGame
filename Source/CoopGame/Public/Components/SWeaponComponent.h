@@ -29,6 +29,7 @@ protected:
     FName EquipWeaponSocketName;
     
 	virtual void BeginPlay() override;
+    virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
     void EquipWeapon();
     void AttachWeaponToSocket(ASBaseWeapon* Weapon, USceneComponent* Component, const FName SocketName) const;

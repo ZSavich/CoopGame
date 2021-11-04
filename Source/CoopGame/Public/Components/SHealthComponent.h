@@ -7,6 +7,8 @@
 
 class ASCharacter;
 
+DECLARE_MULTICAST_DELEGATE(FOnDeathSignature);
+
 UCLASS( ClassGroup=(COOP), meta=(BlueprintSpawnableComponent) )
 class COOPGAME_API USHealthComponent : public UActorComponent
 {
@@ -14,6 +16,8 @@ class COOPGAME_API USHealthComponent : public UActorComponent
 
 public:
 	USHealthComponent();
+
+    FOnDeathSignature OnDeath;
 
     UFUNCTION(BlueprintPure)
     FORCEINLINE float GetHealth() const {return Health;}

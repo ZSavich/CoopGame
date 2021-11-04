@@ -27,6 +27,14 @@ void USWeaponComponent::BeginPlay()
 	EquipWeapon();
 }
 
+void USWeaponComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+    WeaponClass = nullptr;
+    CurrentWeapon->SetLifeSpan(5.f);
+    CurrentWeapon = nullptr;
+    Super::EndPlay(EndPlayReason);
+}
+
 void USWeaponComponent::EquipWeapon()
 {
     if(!WeaponClass || !GetWorld()) return;

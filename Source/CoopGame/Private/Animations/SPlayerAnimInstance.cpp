@@ -1,9 +1,10 @@
 
 
 #include "Animations/SPlayerAnimInstance.h"
-
-#include "GameFramework/Character.h"
+#include "SCharacter.h"
 #include "GameFramework/CharacterMovementComponent.h"
+
+class ASCharacter;
 
 USPlayerAnimInstance::USPlayerAnimInstance()
 {
@@ -12,6 +13,7 @@ USPlayerAnimInstance::USPlayerAnimInstance()
     Direction = 0.f;
     bIsCrouching = false;
     bIsJumping = false;
+    bIsDead = false;
 }
 
 void USPlayerAnimInstance::NativeInitializeAnimation()
@@ -37,10 +39,13 @@ void USPlayerAnimInstance::UpdateAnimationProperties()
 
     /** Jump **/
     bIsJumping = PlayerCharacter->GetCharacterMovement()->IsFalling();
+
+    /** Dead Status **/
+    bIsDead = PlayerCharacter->IsDead();
 }
 
 void USPlayerAnimInstance::GetPlayerCharacter()
 {
     if(!TryGetPawnOwner()) return;
-    PlayerCharacter = Cast<ACharacter>(TryGetPawnOwner());
+    PlayerCharacter = Cast<ASCharacter>(TryGetPawnOwner());
 }

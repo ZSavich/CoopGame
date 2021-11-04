@@ -5,6 +5,7 @@
 #include "Animation/AnimInstance.h"
 #include "SPlayerAnimInstance.generated.h"
 
+class ASCharacter;
 
 UCLASS()
 class COOPGAME_API USPlayerAnimInstance : public UAnimInstance
@@ -15,7 +16,7 @@ class COOPGAME_API USPlayerAnimInstance : public UAnimInstance
     
 protected:
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Animation Properties")
-    ACharacter* PlayerCharacter;
+    ASCharacter* PlayerCharacter;
 
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Animation Properties")
     float Speed;
@@ -28,6 +29,9 @@ protected:
 
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Animation Properties")
     bool bIsJumping;
+
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Animation Properties")
+    bool bIsDead;
     
     UFUNCTION(BlueprintCallable, Category="Animation Properties")
     void UpdateAnimationProperties();

@@ -2,6 +2,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "SHealthComponent.h"
 #include "GameFramework/Character.h"
 #include "SCharacter.generated.h"
 
@@ -50,9 +51,13 @@ protected:
     void OnWantsZoom(const bool bIsWants);
     void ZoomTick(const float DeltaTime);
 
+    void OnDeath();
+
 public:	
 	virtual void Tick(float DeltaTime) override;
     virtual FVector GetPawnViewLocation() const override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+    FORCEINLINE bool IsDead() const {return HealthComp->IsDead();}
 
 };

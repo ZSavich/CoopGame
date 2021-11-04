@@ -29,6 +29,10 @@ bool USHealthComponent::FindOwnerCharacter()
 void USHealthComponent::HandleTakeAnyDamage(AActor* DamagedActor, float Damage, const UDamageType* DamageType, AController* InstigatedBy,
     AActor* DamageCauser)
 {
-    if(Health - Damage <= 0) bIsDead = true;
+    if(Health - Damage <= 0)
+    {
+        bIsDead = true;
+        OnDeath.Broadcast();
+    }
     Health = FMath::Clamp(Health - Damage, 0.f, MaxHealth);
 }

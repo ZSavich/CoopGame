@@ -36,7 +36,10 @@ ASCharacter::ASCharacter()
 void ASCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+    check(WeaponComp);
+    check(HealthComp);
     DefaultFOV = CameraComp->FieldOfView;
+    HealthComp->OnDeath.AddUObject(this,&ASCharacter::OnDeath);
 }
 
 void ASCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -60,11 +63,13 @@ void ASCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 
 void ASCharacter::MoveForward(const float Amount)
 {
+    if(!Amount) return;
     AddMovementInput(GetActorForwardVector(), Amount);
 }
 
 void ASCharacter::MoveRight(const float Amount)
 {
+    if(!Amount) return;
     AddMovementInput(GetActorRightVector(), Amount);
 }
 
@@ -90,6 +95,18 @@ void ASCharacter::ZoomTick(const float DeltaTime)
     
     const auto InterpFOV = FMath::FInterpTo(CameraComp->FieldOfView,TargetFOV,DeltaTime,ZoomInterpolatingSpeed);
     CameraComp->SetFieldOfView(InterpFOV);
+}
+
+void ASCharacter::OnDeath()
+{
+    //GetMesh()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+    //GetMesh()->SetSimulatePhysics(true);
+
+    GetCapsuleComponent()->SetCollisionResponseToAllChannels(ECR_Ignore);
+    WeaponComp->StopFire();
+    WeaponComp->DestroyComponent();
+    DetachFromControllerPendingDestroy();
+    SetLifeSpan(5.f);
 }
 
 void ASCharacter::Tick(float DeltaTime)
