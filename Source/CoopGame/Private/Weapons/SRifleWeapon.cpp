@@ -20,6 +20,12 @@ ASRifleWeapon::ASRifleWeapon()
     FireRate = 600.f;
 }
 
+void ASRifleWeapon::BeginPlay()
+{
+    Super::BeginPlay();
+    TimeBetweenShots = 60 / FireRate;
+}
+
 void ASRifleWeapon::Fire()
 {
     if(!GetOwner() || !GetWorld()) return;
@@ -68,6 +74,7 @@ void ASRifleWeapon::Fire()
     Tracer->SetVectorParameter(TracerEffectEndPointName, EndTrace);
     UGameplayStatics::SpawnEmitterAttached(MuzzleEffect, MeshComp, MuzzleSocketName);
     ShakeCamera();
+    LastFireTime = GetWorld()->TimeSeconds;
     
     if(DebugWeaponDrawing > 0)
     {
@@ -80,7 +87,9 @@ void ASRifleWeapon::Fire()
 void ASRifleWeapon::StartFire()
 {
     if(!GetWorld()) return;
-    GetWorld()->GetTimerManager().SetTimer(FireTimer, this, &ASRifleWeapon::Fire, FireRate, true, 0.f);
+    
+    float FirstDelay = FMath::Max(LastFireTime + TimeBetweenShots - GetWorld()->TimeSeconds,0.0f);
+    GetWorld()->GetTimerManager().SetTimer(FireTimer, this, &ASRifleWeapon::Fire, TimeBetweenShots, true, FirstDelay);
 }
 
 void ASRifleWeapon::StopFire()

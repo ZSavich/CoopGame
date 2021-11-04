@@ -7,7 +7,7 @@
 
 class ASBaseWeapon;
 
-UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
+UCLASS( ClassGroup=(COOP), meta=(BlueprintSpawnableComponent) )
 class COOPGAME_API USWeaponComponent : public UActorComponent
 {
 	GENERATED_BODY()

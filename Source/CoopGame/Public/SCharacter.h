@@ -8,6 +8,7 @@
 class UCameraComponent;
 class USpringArmComponent;
 class USWeaponComponent;
+class USHealthComponent;
 
 UCLASS()
 class COOPGAME_API ASCharacter : public ACharacter
@@ -25,7 +26,10 @@ protected:
     USpringArmComponent* SpringArmComp;
 
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components")
-    USWeaponComponent* WeaponComponent;
+    USWeaponComponent* WeaponComp;
+
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components")
+    USHealthComponent* HealthComp;
     
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Zoom")
     float ZoomedFOV;

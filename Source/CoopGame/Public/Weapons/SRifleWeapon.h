@@ -13,6 +13,7 @@ class COOPGAME_API ASRifleWeapon : public ASBaseWeapon
 public:
     ASRifleWeapon();
 
+    virtual void BeginPlay() override;
     virtual void Fire() override;
     virtual void StartFire() override;
     virtual void StopFire() override;
@@ -43,4 +44,7 @@ protected:
     UParticleSystem* TracerEffect;
     
     FTimerHandle FireTimer;
+
+    float LastFireTime;
+    float TimeBetweenShots;
 };

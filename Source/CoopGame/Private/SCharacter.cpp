@@ -1,16 +1,22 @@
 
 
 #include "SCharacter.h"
+
+#include "SHealthComponent.h"
 #include "Camera/CameraComponent.h"
+#include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/PawnMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Components/SWeaponComponent.h"
+#include "CoopGame/CoopGame.h"
 
 ASCharacter::ASCharacter()
 {
  	PrimaryActorTick.bCanEverTick = true;
     GetCharacterMovement()->NavAgentProps.bCanCrouch = true;
+
+    GetCapsuleComponent()->SetCollisionResponseToChannel(WEAPON_TRACE, ECR_Ignore);
     
     SpringArmComp = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm Component"));
     SpringArmComp->SetupAttachment(GetRootComponent());
@@ -19,7 +25,8 @@ ASCharacter::ASCharacter()
     CameraComp = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera Component"));
     CameraComp->SetupAttachment(SpringArmComp);
 
-    WeaponComponent = CreateDefaultSubobject<USWeaponComponent>(TEXT("Weapon Component"));
+    WeaponComp = CreateDefaultSubobject<USWeaponComponent>(TEXT("Weapon Component"));
+    HealthComp = CreateDefaultSubobject<USHealthComponent>(TEXT("Health Component"));
 
     bWantsZoom = false;
     ZoomedFOV = 50.f;
@@ -43,8 +50,8 @@ void ASCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
     PlayerInputComponent->BindAction("Crouch", IE_Pressed, this, &ASCharacter::StartCrouch);
     PlayerInputComponent->BindAction("Crouch", IE_Released, this, &ASCharacter::EndCrouch);
     PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ASCharacter::Jump);
-    PlayerInputComponent->BindAction("Fire", IE_Pressed, WeaponComponent, &USWeaponComponent::StartFire);
-    PlayerInputComponent->BindAction("Fire", IE_Released, WeaponComponent, &USWeaponComponent::StopFire);
+    PlayerInputComponent->BindAction("Fire", IE_Pressed, WeaponComp, &USWeaponComponent::StartFire);
+    PlayerInputComponent->BindAction("Fire", IE_Released, WeaponComp, &USWeaponComponent::StopFire);
 
     DECLARE_DELEGATE_OneParam(FOnWantsZoomSignature, bool)
     PlayerInputComponent->BindAction<FOnWantsZoomSignature>("Zoom", IE_Pressed, this, &ASCharacter::OnWantsZoom, true);
