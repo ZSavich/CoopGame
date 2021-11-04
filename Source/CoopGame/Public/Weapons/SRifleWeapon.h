@@ -14,6 +14,8 @@ public:
     ASRifleWeapon();
 
     virtual void Fire() override;
+    virtual void StartFire() override;
+    virtual void StopFire() override;
     
 protected:
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Weapon Properties")
@@ -28,6 +30,9 @@ protected:
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Weapon Properties")
     TSubclassOf<UDamageType> DamageTypeClass;
 
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Weapon Properties")
+    float FireRate;
+
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Effects")
     UParticleSystem* DefaultImpactEffect;
 
@@ -36,4 +41,6 @@ protected:
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Effects")
     UParticleSystem* TracerEffect;
+    
+    FTimerHandle FireTimer;
 };

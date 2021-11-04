@@ -14,9 +14,8 @@ class COOPGAME_API ASBaseWeapon : public AActor
 public:	
     ASBaseWeapon();
     
-    UFUNCTION(BlueprintCallable)
-    virtual void Fire() {};
-
+    virtual void StartFire() {};
+    virtual void StopFire() {};
     void ShakeCamera();
     
 protected:
@@ -31,4 +30,6 @@ protected:
 
     UPROPERTY(EditDefaultsOnly, Category="Effects")
     TSubclassOf<UCameraShakeBase> CameraShakeClass;
+    
+    virtual void Fire() {};
 };

@@ -17,6 +17,7 @@ ASRifleWeapon::ASRifleWeapon()
     BaseDamage = 15.f;
     ShotDistance = 1500.f;
     TracerEffectEndPointName = "BeamEnd";
+    FireRate = 600.f;
 }
 
 void ASRifleWeapon::Fire()
@@ -37,24 +38,27 @@ void ASRifleWeapon::Fire()
     CollisionParams.bReturnPhysicalMaterial = true;
     
     FHitResult HitResult;
+    auto ActualDamage = BaseDamage;
+    
     if(GetWorld()->LineTraceSingleByChannel(HitResult,EyesLocation,EndTrace, WEAPON_TRACE, CollisionParams))
     {
         EndTrace = HitResult.ImpactPoint;
         
-        UGameplayStatics::ApplyPointDamage(HitResult.GetActor(), BaseDamage, ShotDirection, HitResult,
-            GetOwner()->GetInstigatorController(), this, DamageTypeClass);
-
         const auto PhysSurface = UPhysicalMaterial::DetermineSurfaceType(HitResult.PhysMaterial.Get());
         auto ActualImpactEffect = DefaultImpactEffect;
         
         switch(PhysSurface)
         {
-            case FLESH_SURFACE:
             case HEAD_SURFACE:
+                ActualDamage *= 4.f;
+            case FLESH_SURFACE:
                 ActualImpactEffect = FleshImpactEffect;
                 break;
             default: ;
         }
+        
+        UGameplayStatics::ApplyPointDamage(HitResult.GetActor(), ActualDamage, ShotDirection, HitResult,
+            GetOwner()->GetInstigatorController(), this, DamageTypeClass);
         
         UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ActualImpactEffect, EndTrace, HitResult.ImpactNormal.Rotation());
         
@@ -69,5 +73,18 @@ void ASRifleWeapon::Fire()
     {
         DrawDebugLine(GetWorld(),MuzzleLocation,EndTrace,FColor::Red,false,3.f,2.f,2.f);
         DrawDebugSphere(GetWorld(),EndTrace,5.f,12.f,FColor::Red,false,3.f,2.f,2.f);
+        DrawDebugString(GetWorld(),EndTrace, FString::SanitizeFloat(ActualDamage),0,FColor::White,3.f);
     }
+}
+
+void ASRifleWeapon::StartFire()
+{
+    if(!GetWorld()) return;
+    GetWorld()->GetTimerManager().SetTimer(FireTimer, this, &ASRifleWeapon::Fire, FireRate, true, 0.f);
+}
+
+void ASRifleWeapon::StopFire()
+{
+    if(!GetWorld()) return;
+    GetWorld()->GetTimerManager().ClearTimer(FireTimer);
 }

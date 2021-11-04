@@ -15,7 +15,8 @@ class COOPGAME_API USWeaponComponent : public UActorComponent
 public:	
 	USWeaponComponent();
 
-    void Fire();
+    void StartFire();
+    void StopFire();
 
 protected:
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Weapon Info")

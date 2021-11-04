@@ -9,10 +9,16 @@ USWeaponComponent::USWeaponComponent()
     EquipWeaponSocketName = "S_WeaponEquip";
 }
 
-void USWeaponComponent::Fire()
+void USWeaponComponent::StartFire()
 {
     if(!CurrentWeapon) return;
-    CurrentWeapon->Fire();
+    CurrentWeapon->StartFire();
+}
+
+void USWeaponComponent::StopFire()
+{
+    if(!CurrentWeapon) return;
+    CurrentWeapon->StopFire();
 }
 
 void USWeaponComponent::BeginPlay()
