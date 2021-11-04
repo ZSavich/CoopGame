@@ -8,6 +8,8 @@ USHealthComponent::USHealthComponent()
     MaxHealth = 100.f;
     bIsDead = false;
     OwnerCharacter = nullptr;
+    OwnerActor = nullptr;
+    bForCharacter = true;
 }
 
 
@@ -15,8 +17,17 @@ void USHealthComponent::BeginPlay()
 {
 	Super::BeginPlay();
     Health = MaxHealth;
-    if(!FindOwnerCharacter()) return;
-    OwnerCharacter->OnTakeAnyDamage.AddDynamic(this, &USHealthComponent::HandleTakeAnyDamage);
+    if(bForCharacter)
+    {
+        if(!FindOwnerCharacter()) return;
+        OwnerCharacter->OnTakeAnyDamage.AddDynamic(this, &USHealthComponent::HandleTakeAnyDamage);
+    }
+    else
+    {
+        if(!FindOwnerActor()) return;
+        OwnerActor->OnTakeAnyDamage.AddDynamic(this, &USHealthComponent::HandleTakeAnyDamage);
+    }
+
 }
 
 bool USHealthComponent::FindOwnerCharacter()
@@ -26,9 +37,18 @@ bool USHealthComponent::FindOwnerCharacter()
     return OwnerCharacter ? true : false;
 }
 
+bool USHealthComponent::FindOwnerActor()
+{
+    if(OwnerActor) return true;
+    OwnerActor = GetOwner<AActor>();
+    return OwnerActor ? true : false;
+}
+
+
 void USHealthComponent::HandleTakeAnyDamage(AActor* DamagedActor, float Damage, const UDamageType* DamageType, AController* InstigatedBy,
     AActor* DamageCauser)
 {
+    UE_LOG(LogTemp, Warning, TEXT("USHealthComponent::HandleTakeAnyDamage"));
     if(Health - Damage <= 0)
     {
         bIsDead = true;

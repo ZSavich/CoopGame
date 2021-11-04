@@ -33,12 +33,18 @@ public:
 protected:
     UPROPERTY()
     ASCharacter* OwnerCharacter;
+
+    UPROPERTY()
+    AActor* OwnerActor;
     
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Health")
     float MaxHealth;
     
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Health")
     bool bIsDead;
+    
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Health")
+    bool bForCharacter;
     
     float Health;
     
@@ -48,4 +54,5 @@ protected:
     virtual void BeginPlay() override;
 
     bool FindOwnerCharacter();
+    bool FindOwnerActor();
 };
