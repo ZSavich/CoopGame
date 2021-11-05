@@ -6,6 +6,7 @@
 #include "Particles/ParticleSystemComponent.h"
 #include "PhysicalMaterials/PhysicalMaterial.h"
 #include "CoopGame/CoopGame.h"
+#include "Net/UnrealNetwork.h"
 
 static int32 DebugWeaponDrawing = 0;
 
@@ -18,6 +19,9 @@ ASRifleWeapon::ASRifleWeapon()
     ShotDistance = 1500.f;
     TracerEffectEndPointName = "BeamEnd";
     FireRate = 600.f;
+
+    NetUpdateFrequency = 66.f;
+    MinNetUpdateFrequency = 33.f;
 }
 
 void ASRifleWeapon::BeginPlay()
@@ -28,6 +32,11 @@ void ASRifleWeapon::BeginPlay()
 
 void ASRifleWeapon::Fire()
 {
+    if(GetLocalRole() < ROLE_Authority)
+    {
+        ServerFire();
+    }
+    
     if(!GetOwner() || !GetWorld()) return;
     
     FVector EyesLocation;
@@ -44,41 +53,43 @@ void ASRifleWeapon::Fire()
     CollisionParams.bReturnPhysicalMaterial = true;
     
     FHitResult HitResult;
+    
     auto ActualDamage = BaseDamage;
+
+    EPhysicalSurface PhysSurface = SurfaceType_Default;
     
     if(GetWorld()->LineTraceSingleByChannel(HitResult,EyesLocation,EndTrace, WEAPON_TRACE, CollisionParams))
     {
         EndTrace = HitResult.ImpactPoint;
         
-        const auto PhysSurface = UPhysicalMaterial::DetermineSurfaceType(HitResult.PhysMaterial.Get());
-        auto ActualImpactEffect = DefaultImpactEffect;
-        
+        PhysSurface = UPhysicalMaterial::DetermineSurfaceType(HitResult.PhysMaterial.Get());
+        PlayImpactEffects(PhysSurface, EndTrace);
+
         switch(PhysSurface)
         {
             case HEAD_SURFACE:
                 ActualDamage *= 4.f;
-            case FLESH_SURFACE:
-                ActualImpactEffect = FleshImpactEffect;
                 break;
             default: ;
         }
         
         UGameplayStatics::ApplyPointDamage(HitResult.GetActor(), ActualDamage, ShotDirection, HitResult,
             GetOwner()->GetInstigatorController(), this, DamageTypeClass);
-        
-        UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ActualImpactEffect, EndTrace, HitResult.ImpactNormal.Rotation());
-        
     }
-    const auto MuzzleLocation = MeshComp->GetSocketLocation(MuzzleSocketName);
-    const auto Tracer = UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), TracerEffect, MuzzleLocation);
-    Tracer->SetVectorParameter(TracerEffectEndPointName, EndTrace);
-    UGameplayStatics::SpawnEmitterAttached(MuzzleEffect, MeshComp, MuzzleSocketName);
+    PlayEmitterEffects(EndTrace);
     ShakeCamera();
     LastFireTime = GetWorld()->TimeSeconds;
-    
+
+    if(GetLocalRole() == ROLE_Authority)
+    {
+        HitScanTrace.TraceTo = EndTrace;
+        HitScanTrace.SurfaceType = PhysSurface;
+    }
+
+    /** COOP.DebugWeapon = 1 **/
     if(DebugWeaponDrawing > 0)
     {
-        DrawDebugLine(GetWorld(),MuzzleLocation,EndTrace,FColor::Red,false,3.f,2.f,2.f);
+        DrawDebugLine(GetWorld(),MeshComp->GetSocketLocation(MuzzleSocketName),EndTrace,FColor::Red,false,3.f,2.f,2.f);
         DrawDebugSphere(GetWorld(),EndTrace,5.f,12.f,FColor::Red,false,3.f,2.f,2.f);
         DrawDebugString(GetWorld(),EndTrace, FString::SanitizeFloat(ActualDamage),0,FColor::White,3.f);
     }
@@ -96,4 +107,55 @@ void ASRifleWeapon::StopFire()
 {
     if(!GetWorld()) return;
     GetWorld()->GetTimerManager().ClearTimer(FireTimer);
+}
+
+void ASRifleWeapon::PlayEmitterEffects(const FVector& EndPoint) const
+{
+    const auto MuzzleLocation = MeshComp->GetSocketLocation(MuzzleSocketName);
+    const auto Tracer = UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), TracerEffect, MuzzleLocation);
+    if(Tracer) Tracer->SetVectorParameter(TracerEffectEndPointName, EndPoint);
+    UGameplayStatics::SpawnEmitterAttached(MuzzleEffect, MeshComp, MuzzleSocketName);
+}
+
+void ASRifleWeapon::PlayImpactEffects(const EPhysicalSurface& SurfaceType, const FVector& ImpactPoint) const
+{
+    auto ActualImpactEffect = DefaultImpactEffect;
+        
+    switch(SurfaceType)
+    {
+        case HEAD_SURFACE:
+        case FLESH_SURFACE:
+            ActualImpactEffect = FleshImpactEffect;
+        break;
+        default: ;
+    }
+
+    const auto MuzzleLocation = MeshComp->GetSocketLocation(MuzzleSocketName);
+    const auto ShotDirection = (ImpactPoint - MuzzleLocation).GetSafeNormal();
+
+    UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ActualImpactEffect, ImpactPoint, ShotDirection.Rotation());
+        
+}
+
+void ASRifleWeapon::OnRep_HitScanTrace()
+{
+    PlayEmitterEffects(HitScanTrace.TraceTo);
+    PlayImpactEffects(HitScanTrace.SurfaceType, HitScanTrace.TraceTo);
+}
+
+void ASRifleWeapon::ServerFire_Implementation()
+{
+    Fire();
+}
+
+bool ASRifleWeapon::ServerFire_Validate()
+{
+    return true;
+}
+
+void ASRifleWeapon::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const
+{
+    Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+    // COND_SkipOwner - Not Replicate To Called Client
+    DOREPLIFETIME_CONDITION(ASRifleWeapon, HitScanTrace, COND_SkipOwner);
 }

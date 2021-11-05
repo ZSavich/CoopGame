@@ -1,6 +1,7 @@
 
 #include "Components/SHealthComponent.h"
 #include "SCharacter.h"
+#include "Net/UnrealNetwork.h"
 
 USHealthComponent::USHealthComponent()
 {
@@ -17,16 +18,20 @@ void USHealthComponent::BeginPlay()
 {
 	Super::BeginPlay();
     Health = MaxHealth;
-    if(bForCharacter)
+    if(GetOwnerRole() == ROLE_Authority)
     {
-        if(!FindOwnerCharacter()) return;
-        OwnerCharacter->OnTakeAnyDamage.AddDynamic(this, &USHealthComponent::HandleTakeAnyDamage);
+        if(bForCharacter)
+        {
+            if(!FindOwnerCharacter()) return;
+            OwnerCharacter->OnTakeAnyDamage.AddDynamic(this, &USHealthComponent::HandleTakeAnyDamage);
+        }
+        else
+        {
+            if(!FindOwnerActor()) return;
+            OwnerActor->OnTakeAnyDamage.AddDynamic(this, &USHealthComponent::HandleTakeAnyDamage);
+        } 
     }
-    else
-    {
-        if(!FindOwnerActor()) return;
-        OwnerActor->OnTakeAnyDamage.AddDynamic(this, &USHealthComponent::HandleTakeAnyDamage);
-    }
+   
 
 }
 
@@ -56,4 +61,10 @@ void USHealthComponent::HandleTakeAnyDamage(AActor* DamagedActor, float Damage, 
     }
     Health = FMath::Clamp(Health - Damage, 0.f, MaxHealth);
     OnHealthChanged.Broadcast(Health, MaxHealth);
+}
+
+void USHealthComponent::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const
+{
+    Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+    DOREPLIFETIME(USHealthComponent, bIsDead);
 }

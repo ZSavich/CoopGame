@@ -5,6 +5,18 @@
 #include "Weapons/SBaseWeapon.h"
 #include "SRifleWeapon.generated.h"
 
+USTRUCT()
+struct FHitScanTrace
+{
+    GENERATED_BODY()
+
+    UPROPERTY()
+    TEnumAsByte<EPhysicalSurface> SurfaceType; 
+
+    UPROPERTY()
+    FVector_NetQuantize TraceTo;
+};
+
 UCLASS()
 class COOPGAME_API ASRifleWeapon : public ASBaseWeapon
 {
@@ -47,4 +59,18 @@ protected:
 
     float LastFireTime;
     float TimeBetweenShots;
+
+    void PlayEmitterEffects(const FVector& EndPoint) const;
+    
+    void PlayImpactEffects(const EPhysicalSurface& SurfaceType, const FVector& ImpactPoint) const;
+    
+    /** Network Replication **/
+    UPROPERTY(ReplicatedUsing=OnRep_HitScanTrace)
+    FHitScanTrace HitScanTrace;
+
+    UFUNCTION()
+    void OnRep_HitScanTrace();
+
+    UFUNCTION(Server,Reliable,Withvalidation)
+    void ServerFire();
 };

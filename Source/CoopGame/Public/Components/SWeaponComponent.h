@@ -14,7 +14,7 @@ class COOPGAME_API USWeaponComponent : public UActorComponent
 
 public:	
 	USWeaponComponent();
-
+  
     void StartFire();
     void StopFire();
 
@@ -22,7 +22,8 @@ protected:
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Weapon Info")
     TSubclassOf<ASBaseWeapon> WeaponClass;
 
-    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Weapon Info")
+    // Replicated - Share Pointer to Client Side from Server
+    UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, Category="Weapon Info")
     ASBaseWeapon* CurrentWeapon;
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Weapon Info")

@@ -10,7 +10,9 @@
 ASBaseWeapon::ASBaseWeapon()
 {
     MeshComp = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Weapon Mesh"));
+    SetRootComponent(MeshComp);
     MuzzleSocketName = "S_MuzzleFlash";
+    bReplicates = true;
 }
 
 void ASBaseWeapon::ShakeCamera()

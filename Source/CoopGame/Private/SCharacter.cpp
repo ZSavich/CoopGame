@@ -11,6 +11,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Components/SWeaponComponent.h"
 #include "CoopGame/CoopGame.h"
+#include "Net/UnrealNetwork.h"
 
 ASCharacter::ASCharacter()
 {
@@ -27,7 +28,10 @@ ASCharacter::ASCharacter()
     CameraComp->SetupAttachment(SpringArmComp);
 
     WeaponComp = CreateDefaultSubobject<USWeaponComponent>(TEXT("Weapon Component"));
+    WeaponComp->SetIsReplicated(true);
+    
     HealthComp = CreateDefaultSubobject<USHealthComponent>(TEXT("Health Component"));
+    HealthComp->SetIsReplicated(true);
 
     bWantsZoom = false;
     ZoomedFOV = 50.f;
@@ -123,4 +127,3 @@ FVector ASCharacter::GetPawnViewLocation() const
     if(!CameraComp) return Super::GetPawnViewLocation();
     return CameraComp->GetComponentLocation();
 }
-

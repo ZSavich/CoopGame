@@ -35,17 +35,21 @@ protected:
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Details")
     UParticleSystem* ExplosionEffect;
 
-    
-
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Details")
     float ExplosionRadius;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Details")
     float ExplosionDamage;
 
+    UPROPERTY(ReplicatedUsing=OnRep_OnExplosed)
     bool bIsExplosed;
+
+    UFUNCTION()
+    void OnRep_OnExplosed();
     
 	virtual void BeginPlay() override;
-    
+
+    UFUNCTION()
     void OnBlowUp();
+    void PlayEffects();
 };

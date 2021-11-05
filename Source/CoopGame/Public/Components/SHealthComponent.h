@@ -19,16 +19,18 @@ public:
 	USHealthComponent();
 
     FOnDeathSignature OnDeath;
+    
     UPROPERTY(BlueprintAssignable)
     FOnHealthChangedSignature OnHealthChanged;
+    
+    UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, Category="Health")
+    bool bIsDead;
 
     UFUNCTION(BlueprintPure)
     FORCEINLINE float GetHealth() const {return Health;}
     UFUNCTION(BlueprintPure)
     FORCEINLINE float GetHealthByPercent() const {return Health/MaxHealth;}
     FORCEINLINE void SetMaxHealth(const float Amount) {MaxHealth = Amount;}
-    UFUNCTION(BlueprintPure)
-    FORCEINLINE bool IsDead() const {return bIsDead;}
 
 protected:
     UPROPERTY()
@@ -39,9 +41,6 @@ protected:
     
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Health")
     float MaxHealth;
-    
-    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Health")
-    bool bIsDead;
     
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Health")
     bool bForCharacter;

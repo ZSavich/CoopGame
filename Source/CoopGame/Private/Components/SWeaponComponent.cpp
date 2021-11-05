@@ -2,6 +2,7 @@
 
 #include "Components/SWeaponComponent.h"
 #include "SCharacter.h"
+#include "Net/UnrealNetwork.h"
 #include "Weapons/SBaseWeapon.h"
 
 USWeaponComponent::USWeaponComponent()
@@ -24,11 +25,15 @@ void USWeaponComponent::StopFire()
 void USWeaponComponent::BeginPlay()
 {
 	Super::BeginPlay();
-	EquipWeapon();
+    if(GetOwnerRole() == ROLE_Authority) // Spawn Actor Only on Server
+    {
+        EquipWeapon();
+    }
 }
 
 void USWeaponComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
+    if(!CurrentWeapon) return;
     WeaponClass = nullptr;
     CurrentWeapon->SetLifeSpan(5.f);
     CurrentWeapon = nullptr;
@@ -55,4 +60,11 @@ void USWeaponComponent::AttachWeaponToSocket(ASBaseWeapon* Weapon, USceneCompone
 
     Weapon->AttachToComponent(Component,AttachmentRules,SocketName);
     Weapon->SetOwner(GetOwner());
+}
+
+// Replicate CurrentWeapon for Client
+void USWeaponComponent::GetLifetimeReplicatedProps( TArray< FLifetimeProperty > & OutLifetimeProps ) const
+{
+    Super::GetLifetimeReplicatedProps( OutLifetimeProps );
+    DOREPLIFETIME(USWeaponComponent, CurrentWeapon);
 }
