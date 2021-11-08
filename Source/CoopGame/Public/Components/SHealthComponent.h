@@ -44,7 +44,8 @@ protected:
     
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Health")
     bool bForCharacter;
-    
+
+    UPROPERTY(ReplicatedUsing=OnRep_Health);
     float Health;
     
     UFUNCTION()
@@ -54,4 +55,7 @@ protected:
 
     bool FindOwnerCharacter();
     bool FindOwnerActor();
+
+    UFUNCTION()
+    void OnRep_Health() const;
 };

@@ -47,6 +47,10 @@ bool USHealthComponent::FindOwnerActor()
     return OwnerActor ? true : false;
 }
 
+void USHealthComponent::OnRep_Health() const
+{
+    OnHealthChanged.Broadcast(Health,MaxHealth);
+}
 
 void USHealthComponent::HandleTakeAnyDamage(AActor* DamagedActor, float Damage, const UDamageType* DamageType, AController* InstigatedBy,
     AActor* DamageCauser)
@@ -64,4 +68,5 @@ void USHealthComponent::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > &
 {
     Super::GetLifetimeReplicatedProps(OutLifetimeProps);
     DOREPLIFETIME(USHealthComponent, bIsDead);
+    DOREPLIFETIME(USHealthComponent, Health);
 }
