@@ -31,8 +31,6 @@ void USHealthComponent::BeginPlay()
             OwnerActor->OnTakeAnyDamage.AddDynamic(this, &USHealthComponent::HandleTakeAnyDamage);
         } 
     }
-   
-
 }
 
 bool USHealthComponent::FindOwnerCharacter()
@@ -53,7 +51,6 @@ bool USHealthComponent::FindOwnerActor()
 void USHealthComponent::HandleTakeAnyDamage(AActor* DamagedActor, float Damage, const UDamageType* DamageType, AController* InstigatedBy,
     AActor* DamageCauser)
 {
-    UE_LOG(LogTemp, Warning, TEXT("USHealthComponent::HandleTakeAnyDamage"));
     if(Health - Damage <= 0)
     {
         bIsDead = true;

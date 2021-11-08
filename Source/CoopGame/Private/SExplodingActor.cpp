@@ -22,6 +22,7 @@ ASExplodingActor::ASExplodingActor()
     RadialForceComp->bImpulseVelChange = true;
     RadialForceComp->SetAutoActivate(false);
     bReplicates = true;
+    SetReplicateMovement(true);
 }
 
 void ASExplodingActor::OnRep_OnExplosed()
@@ -45,13 +46,14 @@ void ASExplodingActor::OnBlowUp()
     PlayEffects();
     UGameplayStatics::ApplyRadialDamage(GetWorld(), ExplosionDamage, GetActorLocation(), ExplosionRadius,
         UDamageType::StaticClass(), {this});
+    
+    RadialForceComp->FireImpulse(); // Not good way. Better - Turn off Replication for ActorMovement and Initialize FireImpulse() on PlayEffects()
     SetLifeSpan(5.f);
 }
 
 void ASExplodingActor::PlayEffects()
 {
     UGameplayStatics::SpawnEmitterAtLocation(GetWorld(),ExplosionEffect,GetActorLocation());
-    RadialForceComp->FireImpulse();
     MeshComp->AddImpulse(FVector(0,0,600.f),NAME_None, true);
     if(AfterExplosionMaterial) MeshComp->SetMaterial(0,AfterExplosionMaterial);
 }
