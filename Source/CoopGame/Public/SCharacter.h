@@ -61,6 +61,6 @@ public:
     virtual FVector GetPawnViewLocation() const override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+    FORCEINLINE USHealthComponent* GetHealthComponent() const {return HealthComp;}
     FORCEINLINE bool IsDead() const {return HealthComp->bIsDead;}
-
 };

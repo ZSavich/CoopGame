@@ -1,18 +1,26 @@
 
 #include "Powerups/SPowerupActor.h"
-
-#include "SHealthComponent.h"
-#include "GameFramework/Character.h"
-#include "GameFramework/CharacterMovementComponent.h"
-#include "Kismet/GameplayStatics.h"
+#include "Components/PointLightComponent.h"
 
 ASPowerupActor::ASPowerupActor()
 {
-    PowerUpInterval = 0.5f;
-    TotalNrOfTicks = 3;
+    SceneComp = CreateDefaultSubobject<USceneComponent>(TEXT("Scene Component"));
+    SetRootComponent(SceneComp);
+    
+    StaticMeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh Component"));
+    StaticMeshComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+    StaticMeshComp->SetupAttachment(GetRootComponent());
+
+    PointLightComp = CreateDefaultSubobject<UPointLightComponent>(TEXT("Point Light"));
+    PointLightComp->SetupAttachment(StaticMeshComp);
+
+    RotationComp = CreateDefaultSubobject<URotatingMovementComponent>(TEXT("Rotation Movement Component"));
+    RotationComp->RotationRate = FRotator(0.f, 15.f, 0.f);
+    
+    PowerUpInterval = 1.f;
+    TotalNrOfTicks = 5;
     TicksProcessed = 0;
 }
-
 
 void ASPowerupActor::BeginPlay()
 {
@@ -21,6 +29,8 @@ void ASPowerupActor::BeginPlay()
 
 void ASPowerupActor::ActivatePowerUp()
 {
+    OnActivated();
+    
     if(PowerUpInterval > 0.f)
         GetWorldTimerManager().SetTimer(TickTimer, this, &ASPowerupActor::OnTicked, PowerUpInterval, true, 0.f);
     else
@@ -34,26 +44,4 @@ void ASPowerupActor::OnTicked()
         GetWorldTimerManager().ClearTimer(TickTimer);
         OnExpired();
     }
-
-    // Main Functional for Tick event
-}
-
-void ASPowerupActor::OnExpired()
-{
-    if(!GetWorld()) return;
-    const auto PlayerCharacter = UGameplayStatics::GetPlayerCharacter(GetWorld(),0);
-    
-    if(!PlayerCharacter || !PlayerCharacter->GetCharacterMovement()) return;
-    
-    PlayerCharacter->GetCharacterMovement()->MaxWalkSpeed /= 2.f;
-}
-
-void ASPowerupActor::OnActivated()
-{
-    if(!GetWorld()) return;
-    const auto PlayerCharacter = UGameplayStatics::GetPlayerCharacter(GetWorld(),0);
-    
-    if(!PlayerCharacter || !PlayerCharacter->GetCharacterMovement()) return;
-    
-    PlayerCharacter->GetCharacterMovement()->MaxWalkSpeed *= 2.f;
 }

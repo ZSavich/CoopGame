@@ -26,6 +26,8 @@ public:
     UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, Category="Health")
     bool bIsDead;
 
+    bool Heal(const float& Amount);
+    
     UFUNCTION(BlueprintPure)
     FORCEINLINE float GetHealth() const {return Health;}
     UFUNCTION(BlueprintPure)

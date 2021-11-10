@@ -3,7 +3,10 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "GameFramework/RotatingMovementComponent.h"
 #include "SPowerupActor.generated.h"
+
+class UPointLightComponent;
 
 UCLASS()
 class COOPGAME_API ASPowerupActor : public AActor
@@ -13,8 +16,23 @@ class COOPGAME_API ASPowerupActor : public AActor
 public:	
 	ASPowerupActor();
 
+    UFUNCTION(BlueprintCallable)
+    void ActivatePowerUp();
+
 protected:
 	virtual void BeginPlay() override;
+    
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components")
+    USceneComponent* SceneComp;
+    
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components")
+    UStaticMeshComponent* StaticMeshComp;
+
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components")
+    UPointLightComponent* PointLightComp;
+
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components")
+    URotatingMovementComponent* RotationComp;
     
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Tick")
     float PowerUpInterval;
@@ -26,8 +44,7 @@ protected:
 
     FTimerHandle TickTimer;
 
-    void OnActivated();
-    void OnExpired();
+    virtual void OnActivated() {};
+    virtual void OnExpired() {};
     void OnTicked();
-    void ActivatePowerUp();
 };
