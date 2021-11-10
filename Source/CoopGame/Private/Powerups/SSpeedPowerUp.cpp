@@ -1,7 +1,7 @@
 
 
 #include "Powerups/SSpeedPowerUp.h"
-#include "GameFramework/Character.h"
+#include "SCharacter.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -12,22 +12,22 @@ ASSpeedPowerUp::ASSpeedPowerUp()
 
 void ASSpeedPowerUp::OnActivated()
 {
-    if(!GetWorld()) return;
-    const auto PlayerCharacter = UGameplayStatics::GetPlayerCharacter(GetWorld(),0);
-    
-    if(!PlayerCharacter || !PlayerCharacter->GetCharacterMovement()) return;
-    PlayerCharacter->GetCharacterMovement()->MaxWalkSpeed *= SpeedMultiplyValue;
+    if(GetLocalRole() == ROLE_Authority)
+    {        
+        if(!InstigatorCharacter || !InstigatorCharacter->GetCharacterMovement()) return;
+        InstigatorCharacter->GetCharacterMovement()->MaxWalkSpeed *= SpeedMultiplyValue;
+    }
     
     StaticMeshComp->SetVisibility(false,true);
 }
 
 void ASSpeedPowerUp::OnExpired()
 {
-    if(!GetWorld()) return;
-    const auto PlayerCharacter = UGameplayStatics::GetPlayerCharacter(GetWorld(),0);
+    if(GetLocalRole() == ROLE_Authority)
+    {        
+        if(!InstigatorCharacter || !InstigatorCharacter->GetCharacterMovement()) return;
+        InstigatorCharacter->GetCharacterMovement()->MaxWalkSpeed /= SpeedMultiplyValue;
+    }
     
-    if(!PlayerCharacter || !PlayerCharacter->GetCharacterMovement()) return;
-    PlayerCharacter->GetCharacterMovement()->MaxWalkSpeed /= SpeedMultiplyValue;
-
     Destroy();
 }

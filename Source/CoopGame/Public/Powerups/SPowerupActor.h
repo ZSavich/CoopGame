@@ -7,6 +7,7 @@
 #include "SPowerupActor.generated.h"
 
 class UPointLightComponent;
+class ASCharacter;
 
 UCLASS()
 class COOPGAME_API ASPowerupActor : public AActor
@@ -19,8 +20,9 @@ public:
     UFUNCTION(BlueprintCallable)
     void ActivatePowerUp();
 
+    FORCEINLINE void SetInstigatorCharacter(ASCharacter* Inst) {InstigatorCharacter = Inst;}
+
 protected:
-	virtual void BeginPlay() override;
     
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components")
     USceneComponent* SceneComp;
@@ -42,6 +44,15 @@ protected:
 
     int32 TicksProcessed;
 
+    UPROPERTY(ReplicatedUsing=OnRep_PowerUpActivated)
+    bool bIsPowerUpActivated;
+
+    UPROPERTY()
+    ASCharacter* InstigatorCharacter;
+
+    UFUNCTION()
+    void OnRep_PowerUpActivated();
+    
     FTimerHandle TickTimer;
 
     virtual void OnActivated() {};

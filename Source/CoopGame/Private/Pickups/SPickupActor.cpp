@@ -22,24 +22,32 @@ ASPickupActor::ASPickupActor()
     CoolDownDuration = 5.f;
     PowerUpInstance = nullptr;
     
+    bReplicates = true;
+    
 }
 
 void ASPickupActor::NotifyActorBeginOverlap(AActor* OtherActor)
 {
-    Super::NotifyActorBeginOverlap(OtherActor);
+    if(GetLocalRole() == ROLE_Authority)
+    {
+        Super::NotifyActorBeginOverlap(OtherActor);
     
-    if(!OtherActor->IsA<ASCharacter>()) return;
-    GetWorldTimerManager().SetTimer(RespawnTimer, this, &ASPickupActor::Respawn, CoolDownDuration);
+        const auto PlayerCharacter = Cast<ASCharacter>(OtherActor);
+        if(!PlayerCharacter) return;
+        GetWorldTimerManager().SetTimer(RespawnTimer, this, &ASPickupActor::Respawn, CoolDownDuration);
     
-    if(!PowerUpInstance) return;
-    PowerUpInstance->ActivatePowerUp();
-    PowerUpInstance = nullptr;
+        if(!PowerUpInstance) return;
+        PowerUpInstance->SetInstigatorCharacter(PlayerCharacter);
+        PowerUpInstance->ActivatePowerUp();
+        PowerUpInstance = nullptr;
+    }
 }
 
 void ASPickupActor::BeginPlay()
 {
 	Super::BeginPlay();
-    Respawn();
+    if(GetLocalRole() == ROLE_Authority)
+        Respawn();
 }
 
 void ASPickupActor::Respawn()
