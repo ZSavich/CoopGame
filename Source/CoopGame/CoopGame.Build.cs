@@ -25,6 +25,8 @@ public class CoopGame : ModuleRules
 			"CoopGame/Public/Animations",
 			"CoopGame/Public/Weapons",
 			"CoopGame/Public/Components",
+			"CoopGame/Public/Pickups",
+			"CoopGame/Public/Powerups",
 		});
 
 		// Uncomment if you are using Slate UI

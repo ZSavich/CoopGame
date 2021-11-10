@@ -62,7 +62,7 @@ void ASTrackerBot::BeginPlay()
     SphereComp->OnComponentBeginOverlap.AddDynamic(this,&ASTrackerBot::OnTargetOverlapped);
     if(GetLocalRole() == ROLE_Authority)
     {
-        HealthComp->OnHealthChanged.AddDynamic(this, &ASTrackerBot::HandleTakeDamage);
+        HealthComp->OnHealthChanged.AddUniqueDynamic(this, &ASTrackerBot::HandleTakeDamage);
         GetNextPathPoint();
     }
 }
@@ -86,7 +86,7 @@ void ASTrackerBot::SelfDestroy()
     UGameplayStatics::PlaySoundAtLocation(GetWorld(),ExplosionSound,GetActorLocation());
     bExploded = true;
     MeshComp->SetVisibility(false);
-    MeshComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+    MeshComp->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
     if(GetLocalRole() == ROLE_Authority)
     {
         TArray<AActor*> IgnoredActors;
