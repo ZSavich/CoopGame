@@ -92,7 +92,7 @@ void ASTrackerBot::SelfDestroy()
         TArray<AActor*> IgnoredActors;
         UGameplayStatics::GetAllActorsOfClass(GetWorld(), ASTrackerBot::StaticClass(),IgnoredActors);
         UGameplayStatics::ApplyRadialDamage(GetWorld(), PowerDamage, GetActorLocation(), DamageRadius, nullptr, IgnoredActors,this, GetInstigatorController());
-        SetLifeSpan(2.f);
+        SetLifeSpan(1.f);
     }
 }
 

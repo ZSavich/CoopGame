@@ -17,6 +17,7 @@ bool USHealthComponent::Heal(const float& Amount)
 {
     if(Amount <= 0.f || bIsDead || Health == MaxHealth) return false;
     Health = FMath::Clamp(Health + Amount, 0.f, MaxHealth);
+    OnHealthChanged.Broadcast(Health,MaxHealth);
     return true;
 }
 

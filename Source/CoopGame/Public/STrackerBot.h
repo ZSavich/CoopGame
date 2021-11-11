@@ -2,6 +2,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "SHealthComponent.h"
 #include "GameFramework/Pawn.h"
 #include "STrackerBot.generated.h"
 
@@ -89,4 +90,6 @@ protected:
 public:	
 	virtual void Tick(float DeltaTime) override;
     virtual void NotifyActorBeginOverlap(AActor* OtherActor) override;
+
+    FORCEINLINE bool IsDead() const {return HealthComp->bIsDead;}
 };
