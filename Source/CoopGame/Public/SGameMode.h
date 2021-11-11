@@ -7,6 +7,8 @@
 
 enum class EWaveState : uint8;
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnActorKilledSignature, const AActor*, SVictim, const AActor*, SInstigator);
+
 UCLASS()
 class COOPGAME_API ASGameMode : public AGameModeBase
 {
@@ -17,8 +19,11 @@ public:
 
     virtual void StartPlay() override;
     virtual void Tick(float DeltaSeconds) override;
+    
+    FOnActorKilledSignature OnActorKilled;
 	
 protected:
+    
     FTimerHandle SpawnBotsTimer;
     FTimerHandle BetweenWavesTimer;
 
@@ -31,10 +36,16 @@ protected:
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Waves")
     float TimerBetweenWaves;
 
+    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Waves")
+    float PointsByKilling;
+
     int32 NrOfSpawnedBots;
     
     UFUNCTION(BlueprintImplementableEvent, Category="Waves")
     void SpawnBot();
+
+    UFUNCTION()
+    void OnActorKilledHandle(const AActor* SVictim, const AActor* SInstigator);
     
     void StartWave();
     void EndWave();

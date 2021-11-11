@@ -1,6 +1,7 @@
 
 #include "Components/SHealthComponent.h"
 #include "SCharacter.h"
+#include "SGameMode.h"
 #include "Net/UnrealNetwork.h"
 
 USHealthComponent::USHealthComponent()
@@ -67,6 +68,11 @@ void USHealthComponent::HandleTakeAnyDamage(AActor* DamagedActor, float Damage, 
     {
         bIsDead = true;
         OnDeath.Broadcast();
+
+        const auto SGameMode = GetWorld()->GetAuthGameMode<ASGameMode>();
+        
+        if(SGameMode && InstigatedBy)
+            SGameMode->OnActorKilled.Broadcast(GetOwner(), InstigatedBy->GetPawn<AActor>());
     }
     Health = FMath::Clamp(Health - Damage, 0.f, MaxHealth);
     OnHealthChanged.Broadcast(Health, MaxHealth);

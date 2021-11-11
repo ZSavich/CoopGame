@@ -5,6 +5,7 @@
 #include "SCharacter.h"
 #include "STrackerBot.h"
 #include "SGameState.h"
+#include "SPlayerState.h"
 
 ASGameMode::ASGameMode()
 {
@@ -12,11 +13,15 @@ ASGameMode::ASGameMode()
     PrimaryActorTick.TickInterval = 1.f;
 
     GameStateClass = ASGameState::StaticClass();
+    PlayerStateClass = ASPlayerState::StaticClass();
     
     NrOfBotsToSpawn = 4;
     WaveCount = 2;
     TimerBetweenWaves = 5.f;
     NrOfSpawnedBots = 0;
+    PointsByKilling = 20.f;
+
+    OnActorKilled.AddDynamic(this, &ASGameMode::OnActorKilledHandle);
 }
 
 void ASGameMode::StartPlay()
@@ -96,6 +101,25 @@ void ASGameMode::SetWaveState(const EWaveState& NewState) const
     if(!SGameState) return;
 
     SGameState->SetWaveState(NewState);
+}
+
+void ASGameMode::OnActorKilledHandle(const AActor* SVictim, const AActor* SInstigator)
+{    
+    const auto InstigatorPlayer = Cast<ASCharacter>(SInstigator);
+    if(InstigatorPlayer)
+    {
+        const auto SPlayerState = InstigatorPlayer->GetPlayerState<ASPlayerState>();
+        if(!SPlayerState) return;
+
+        if(SVictim->IsA<ASTrackerBot>())
+            SPlayerState->AddScore(PointsByKilling);
+        else if(SVictim->IsA<ASCharacter>())
+            SPlayerState->AddScore(-PointsByKilling);
+        else
+            SPlayerState->AddScore(1.f);
+        
+        return;
+    }
 }
 
 
