@@ -73,7 +73,7 @@ void ASTrackerBot::GetNextPathPoint()
     if(!Target) return;
     const auto NavPath = UNavigationSystemV1::FindPathToActorSynchronously(GetWorld(), GetActorLocation(),Target);
 
-    if(NavPath->PathPoints.Num() <= 1) NextPathPoint = GetActorLocation();
+    if(!NavPath || NavPath->PathPoints.Num() <= 1) NextPathPoint = GetActorLocation();
     NextPathPoint = NavPath->PathPoints[1];
 }
 
