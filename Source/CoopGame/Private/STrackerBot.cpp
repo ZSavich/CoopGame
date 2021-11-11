@@ -1,12 +1,9 @@
 
 #include "STrackerBot.h"
-
-#include "DrawDebugHelpers.h"
 #include "NavigationPath.h"
 #include "NavigationSystem.h"
 #include "SCharacter.h"
 #include "Kismet/GameplayStatics.h"
-#include "GameFramework/Character.h"
 #include "SHealthComponent.h"
 #include "Components/AudioComponent.h"
 #include "Components/SphereComponent.h"
@@ -136,15 +133,12 @@ void ASTrackerBot::ChaseTarget()
     if(DistanceToTarget <= RequiredDistanceToTarget)
     {
         GetNextPathPoint();
-        DrawDebugString(GetWorld(), GetActorLocation(), "Target Reached!");
     }
     else
     {
         const auto DirectionToTarget = (NextPathPoint - GetActorLocation()).GetSafeNormal();
         MeshComp->AddForce(DirectionToTarget * MovementForce, NAME_None, bUseVelocityChange);
-        DrawDebugDirectionalArrow(GetWorld(), GetActorLocation(),NextPathPoint,MovementForce,FColor::Red,false,0.f,0.f,2.f);
     }
-    DrawDebugSphere(GetWorld(),NextPathPoint,25.f,12.f,FColor::Red,false,0.f,0.f,2.f);
 }
 
 void ASTrackerBot::ChangeRollVolume() const

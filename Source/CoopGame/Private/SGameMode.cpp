@@ -41,6 +41,16 @@ void ASGameMode::PrepareForNextWave()
     if(--WaveCount < 0) return;
     GetWorldTimerManager().SetTimer(BetweenWavesTimer, this, &ASGameMode::StartWave, TimerBetweenWaves);
     SetWaveState(EWaveState::EWS_WaitingToStart);
+    RestartDeadPlayers();
+}
+
+void ASGameMode::RestartDeadPlayers()
+{
+    for(auto It = GetWorld()->GetPlayerControllerIterator(); It; ++It)
+    {
+        const auto CurrentPlayerController = It->Get();
+        if(CurrentPlayerController && !CurrentPlayerController->GetPawn()) RestartPlayer(It->Get());
+    }
 }
 
 void ASGameMode::StartWave()

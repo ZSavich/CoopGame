@@ -20,7 +20,7 @@ void ASGameState::OnRep_WaveState(const EWaveState OldState) const
 void ASGameState::WaveStateChanged(const EWaveState NewState, const EWaveState OldState) const
 {
     const auto DebugMessage = UEnum::GetValueAsString(NewState);
-    GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, DebugMessage, true,FVector2D(1.5f));
+    GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Red, DebugMessage, true,FVector2D(1.5f));
 }
 
 void ASGameState::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const

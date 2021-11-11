@@ -51,6 +51,7 @@ protected:
     void EndWave();
     
     void PrepareForNextWave();
+    void RestartDeadPlayers();
     
     void CheckWaveState();
     void CheckAnyPlayerAlive();
