@@ -16,6 +16,7 @@ public class CoopGame : ModuleRules
 			"PhysicsCore",
 			"UMG",
 			"NavigationSystem",
+			"AIModule"
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
