@@ -19,6 +19,7 @@ ASRifleWeapon::ASRifleWeapon()
     ShotDistance = 1500.f;
     TracerEffectEndPointName = "BeamEnd";
     FireRate = 600.f;
+    FireSpread = 5.f;
 
     NetUpdateFrequency = 66.f;
     MinNetUpdateFrequency = 33.f;
@@ -43,7 +44,12 @@ void ASRifleWeapon::Fire()
     FRotator EyesRotation;
     GetOwner()->GetActorEyesViewPoint(EyesLocation, EyesRotation);
     
-    const auto ShotDirection = EyesRotation.Vector();
+    auto ShotDirection = EyesRotation.Vector();
+
+    // Fire Spread 
+    const auto SpreadInRadians = FMath::DegreesToRadians(FireSpread);
+    ShotDirection = FMath::VRandCone(ShotDirection, SpreadInRadians, SpreadInRadians);
+    
     auto EndTrace = EyesLocation + (ShotDirection * ShotDistance);
 
     FCollisionQueryParams CollisionParams;

@@ -2,6 +2,10 @@
 #include "SCharacterAdvancedAI.h"
 #include "AIController.h"
 #include "BehaviorTree/BehaviorTree.h"
+#include "Perception/AIPerceptionComponent.h"
+ASCharacterAdvancedAI::ASCharacterAdvancedAI()
+{
+}
 
 void ASCharacterAdvancedAI::BeginPlay()
 {

@@ -30,5 +30,7 @@ protected:
 
 public:	
     FORCEINLINE USHealthComponent* GetHealthComponent() const {return HealthComp;}
+    UFUNCTION(BlueprintCallable)
+    FORCEINLINE USWeaponComponent* GetWeaponComponent() const {return WeaponComp;}
     FORCEINLINE bool IsDead() const {return HealthComp->bIsDead;}
 };

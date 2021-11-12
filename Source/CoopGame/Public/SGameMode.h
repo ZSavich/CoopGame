@@ -39,6 +39,9 @@ protected:
     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Waves")
     float PointsByKilling;
 
+    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Waves", meta = (ClampMin=0.f, ClampMax=1.f))
+    float AdvancedAIRate;
+
     int32 NrOfSpawnedBots;
     
     UFUNCTION(BlueprintImplementableEvent, Category="Waves")

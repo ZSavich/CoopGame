@@ -20,6 +20,7 @@ ASGameMode::ASGameMode()
     TimerBetweenWaves = 5.f;
     NrOfSpawnedBots = 0;
     PointsByKilling = 20.f;
+    AdvancedAIRate = .4;
 
     OnActorKilled.AddDynamic(this, &ASGameMode::OnActorKilledHandle);
 }

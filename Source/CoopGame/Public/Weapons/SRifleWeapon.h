@@ -46,6 +46,9 @@ protected:
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Weapon Properties")
     float FireRate;
 
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Weapon Properties")
+    float FireSpread;
+    
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Effects")
     UParticleSystem* DefaultImpactEffect;
 

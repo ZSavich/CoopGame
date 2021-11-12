@@ -14,8 +14,10 @@ class COOPGAME_API USWeaponComponent : public UActorComponent
 
 public:	
 	USWeaponComponent();
-  
+
+    UFUNCTION(BlueprintCallable)
     void StartFire();
+    UFUNCTION(BlueprintCallable)
     void StopFire();
 
 protected:
